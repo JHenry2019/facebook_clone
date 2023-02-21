@@ -1,4 +1,4 @@
-import 'package:facebook_clone/utils/models.dart';
+import '../models/models.dart';
 import 'package:facebook_clone/utils/posts_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +38,12 @@ class _CreatePostPageState extends State<CreatePostPage> {
             ElevatedButton(
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  Post post = Post(text: textController.text);
+                  Post post = Post(
+                    userId: 1,
+                    createdTime: DateTime.now(),
+                    updatedTime: DateTime.now(),
+                    text: textController.text,
+                  );
                   debugPrint(post.toString());
                   Provider.of<PostsManager>(context, listen: false)
                       .addPost(post);

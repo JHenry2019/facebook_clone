@@ -1,5 +1,5 @@
 import 'package:facebook_clone/utils/db_methods.dart';
-import 'package:facebook_clone/utils/models.dart';
+import '../models/models.dart';
 import 'package:flutter/material.dart';
 
 class PostsManager extends ChangeNotifier {
