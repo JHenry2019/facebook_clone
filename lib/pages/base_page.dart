@@ -1,7 +1,9 @@
 import 'package:facebook_clone/pages/home_page.dart';
 import 'package:facebook_clone/utils/tabs_manager.dart';
+import 'package:facebook_clone/utils/user_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../pages/profile_page.dart';
 
 class BasePage extends StatefulWidget {
   const BasePage({Key? key}) : super(key: key);
@@ -23,11 +25,7 @@ List<Widget> pages = [
       color: Colors.blue,
     ),
   ),
-  const Center(
-    child: Placeholder(
-      color: Colors.green,
-    ),
-  ),
+  const ProfilePage(),
   const Center(
     child: Placeholder(
       color: Colors.yellow,
@@ -43,7 +41,8 @@ List<Widget> pages = [
 class _BasePageState extends State<BasePage> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<TabsManager>(builder: (context, tabsManager, child) {
+    return Consumer2<TabsManager, UserManager>(
+        builder: (context, tabsManager, userManager, child) {
       return Scaffold(
         body: pages[tabsManager.currentIndex],
         bottomNavigationBar: BottomNavigationBar(

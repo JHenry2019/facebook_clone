@@ -44,7 +44,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
                     updatedTime: DateTime.now(),
                     text: textController.text,
                   );
-                  debugPrint(post.toString());
                   Provider.of<PostsManager>(context, listen: false)
                       .addPost(post);
                   if (mounted) {
