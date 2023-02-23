@@ -1,5 +1,4 @@
 import '../models/models.dart';
-import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -8,10 +7,9 @@ Future<Database> openDb() async {
     join(await getDatabasesPath(), "FbDb.db"),
     onCreate: (db, version) async {
       await db.execute(
-          'CREATE TABLE Users (userId INTEGER PRIMARY KEY, realName TEXT, profileName TEXT, photoUrl TEXT, createdTime REAL, updatedTime REAL)');
+          'CREATE TABLE Users (userId INTEGER PRIMARY KEY, realName TEXT, profileName TEXT, profileUrl TEXT, mail TEXT, password TEXT, createdTime INTEGER, updatedTime INTEGER)');
       await db.execute(
-          'CREATE TABLE Posts (postId INTEGER PRIMARY KEY, userId INTEGER, createdTime REAL, updatedTime REAL, text TEXT, photoUrl TEXT)');
-      debugPrint("Done");
+          'CREATE TABLE Posts (postId INTEGER PRIMARY KEY, userId INTEGER, createdTime INTEGER, updatedTime INTEGER, text TEXT, photoUrl TEXT)');
     },
     version: 1,
   );
@@ -33,71 +31,32 @@ Future<List<Post>> loadPosts() async {
 Future<void> delete(Post post) async {
   final database = await openDb();
   await database.delete('Posts', where: 'postId = ?', whereArgs: [post.postId]);
-
-  debugPrint('Success deleting');
 }
 
 Future<void> createPost(Post post) async {
   final database = await openDb();
-  debugPrint(post.toMap().toString());
   await database.insert('Posts', post.toMap());
 }
 
+Future<void> createUser(User user) async {
+  final database = await openDb();
+  await database.insert('Users', user.toMap());
+}
 
+Future<User> logIn(String mail, String password) async {
+  final database = await openDb();
+  final users =
+      await database.query('Users', where: 'mail = ?', whereArgs: [mail]);
 
+  if (users.isEmpty) {
+    return Future.error(Exception("User does not exits."));
+  } else {
+    final user = User.fromMap(users[0]);
 
-// await db.execute('''
-
-      //   CREATE TABLE Users (
-      //     userId INTEGER,
-      //     realName TEXT,
-      //     profileName TEXT,
-      //     profileUrl TEXT,
-      //     createdTime INTEGER,
-      //     updatedTime INTEGER
-      //     )
-
-      // ''');
-
-      // await db.execute('''
-
-      //   CREATE TABLE Posts (
-      //     postId INTEGER PRIMARY KEY,
-      //     userId INTEGER,
-      //     FOREIGN KEY(userId) REFERENCES Users(userId),
-      //     createdTime INTEGER,
-      //     updatedTime INTEGER,
-      //     text TEXT,
-      //     photoUrl TEXT
-      //     )
-
-      // ''');
-
-      // await db.execute('''
-
-      //   CREATE TABLE Likes (
-      //     likeId INTEGER,
-      //     userId INTEGER,
-      //     FOREIGN KEY(userId) REFERENCES Users(userId),
-      //     postId INTEGER,
-      //     FOREIGN KEY(postId) REFERENCES Posts(postId),
-      //     createdTime INTEGER,
-      //     updatedTime INTEGER
-      //   )
-
-      // ''');
-
-      // await db.execute('''
-
-      //   CREATE TABLE Comments (
-      //     commentId INTEGER,
-      //     userId INTEGER,
-      //     FOREIGN KEY(userId) REFERENCES Users(userId),
-      //     postId INTEGER,
-      //     FOREIGN KEY(postId) REFERENCES Posts(postId),
-      //     commentText TEXT,
-      //     createdTime INTEGER,
-      //     updatedTime INTEGER
-      //   )
-
-      // ''');
+    if (password == user.password) {
+      return user;
+    } else {
+      return Future.error(Exception("Wrong Password"));
+    }
+  }
+}
