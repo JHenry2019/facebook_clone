@@ -10,8 +10,6 @@ class UserManager extends ChangeNotifier {
 
   void signUpUser(User user) async {
     await createUser(user);
-    currentUser = user;
-    isLoggedIn = true;
     notifyListeners();
   }
 

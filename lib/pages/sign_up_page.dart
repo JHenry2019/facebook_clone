@@ -14,6 +14,7 @@ class SignUpPage extends StatelessWidget {
     final profileNameController = TextEditingController();
     final mailController = TextEditingController();
     final passwordControler = TextEditingController();
+    final confirmPasswordController = TextEditingController();
 
     return Consumer<UserManager>(builder: (context, userManager, child) {
       return Scaffold(
@@ -85,6 +86,18 @@ class SignUpPage extends StatelessWidget {
                         decoration:
                             const InputDecoration(label: Text("Password")),
                       ),
+                      TextFormField(
+                        controller: confirmPasswordController,
+                        obscureText: true,
+                        validator: (value) {
+                          if (value != passwordControler.text) {
+                            return "Passwords do not match";
+                          }
+                          return null;
+                        },
+                        decoration: const InputDecoration(
+                            label: Text("Confirm Password")),
+                      ),
                       const SizedBox(
                         height: 10,
                       ),
@@ -100,6 +113,16 @@ class SignUpPage extends StatelessWidget {
                               updatedTime: DateTime.now(),
                             );
                             userManager.signUpUser(newUser);
+
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: const Text('Signed up successfully'),
+                              action: SnackBarAction(
+                                label: 'Log in now',
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ));
                           }
                         },
                         child: const SizedBox(
