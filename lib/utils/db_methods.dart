@@ -60,3 +60,10 @@ Future<User> logIn(String mail, String password) async {
     }
   }
 }
+
+Future<User> loadUser(int userId) async {
+  final database = await openDb();
+  final users =
+      await database.query('Users', where: 'userId = ?', whereArgs: [userId]);
+  return User.fromMap(users[0]);
+}

@@ -38,6 +38,6 @@ class Post {
 
   @override
   String toString() {
-    return 'Post{id: $postId, text: $text}';
+    return 'Post{postId: $postId, text: $text, userId: $userId}';
   }
 }
