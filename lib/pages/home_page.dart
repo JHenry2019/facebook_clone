@@ -57,7 +57,8 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
             FutureBuilder(
-                future: loadPosts().then((value) => postsManager.posts = value),
+                future: loadPosts().then(
+                    (value) => postsManager.posts = value.reversed.toList()),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     return Column(

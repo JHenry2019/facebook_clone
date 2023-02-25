@@ -25,6 +25,7 @@ class UserManager extends ChangeNotifier {
 
   void logOutUser() {
     currentUser = User(
+        userId: 0,
         realName: "Default account",
         profileName: "Default account",
         mail: "default@gmail.com",
