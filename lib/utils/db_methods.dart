@@ -28,6 +28,19 @@ Future<List<Post>> loadPosts() async {
   return posts;
 }
 
+Future<List<Post>> loadPostsByUser(int userId) async {
+  final database = await openDb();
+  final postMaps =
+      await database.query('Posts', where: 'userId = ?', whereArgs: [userId]);
+  List<Post> posts = [];
+
+  for (Map<String, dynamic> pm in postMaps) {
+    posts.add(Post.fromMap(pm));
+  }
+
+  return posts;
+}
+
 Future<void> delete(Post post) async {
   final database = await openDb();
   await database.delete('Posts', where: 'postId = ?', whereArgs: [post.postId]);

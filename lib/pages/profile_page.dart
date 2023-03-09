@@ -1,17 +1,23 @@
 import 'package:facebook_clone/components/circular_profile.dart';
+import 'package:facebook_clone/utils/db_methods.dart';
 import 'package:facebook_clone/utils/user_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../components/components.dart';
+import '../models/models.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    List<Post> postsByUser = [];
+
     return Consumer<UserManager>(
       builder: ((context, userManager, child) {
         return SafeArea(
-          child: Column(
+          child: ListView(
             children: [
               Row(
                 children: [
@@ -65,13 +71,32 @@ class ProfilePage extends StatelessWidget {
               const SizedBox(
                 height: 50,
               ),
-              Text(
-                userManager.currentUser.profileName,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 25,
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  userManager.currentUser.profileName,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                  ),
                 ),
               ),
+              FutureBuilder(
+                  future: loadPostsByUser(userManager.currentUser.userId!)
+                      .then((value) => postsByUser = value.toList()),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return Column(
+                        children: postsByUser
+                            .map((Post post) => PostCard(post: post))
+                            .toList(),
+                      );
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  }),
             ],
           ),
         );
