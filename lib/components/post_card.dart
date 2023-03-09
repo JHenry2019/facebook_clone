@@ -61,7 +61,9 @@ class _PostCardState extends State<PostCard> {
                         padding: const EdgeInsets.all(5),
                         child: Row(
                           children: [
-                            const CircularProfile(),
+                            const CircularProfile(
+                              radius: 18,
+                            ),
                             const SizedBox(
                               width: 4,
                             ),

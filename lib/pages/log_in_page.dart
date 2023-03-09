@@ -90,6 +90,7 @@ class LogInPage extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
+                formKey.currentState?.reset();
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => const SignUpPage()));
               },
