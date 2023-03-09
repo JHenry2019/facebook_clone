@@ -1,4 +1,5 @@
 import 'package:facebook_clone/components/circular_profile.dart';
+import 'package:facebook_clone/pages/create_post_page.dart';
 import 'package:facebook_clone/utils/db_methods.dart';
 import 'package:facebook_clone/utils/user_manager.dart';
 import 'package:flutter/material.dart';
@@ -80,6 +81,60 @@ class ProfilePage extends StatelessWidget {
                     fontSize: 25,
                   ),
                 ),
+              ),
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Posts',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Filters',
+                          style: TextStyle(
+                            color: Colors.blue[800],
+                            fontSize: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Row(
+                          children: [
+                            const CircularProfile(radius: 18),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const CreatePostPage(),
+                                  ),
+                                );
+                              },
+                              child: const Text("What's on your mind?"),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               FutureBuilder(
                   future: loadPostsByUser(userManager.currentUser.userId!)
