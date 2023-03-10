@@ -1,3 +1,5 @@
+import 'package:facebook_clone/models/friend_request_model.dart';
+
 import '../models/models.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -88,3 +90,44 @@ Future<List<User>> loadUsers(int userId) async {
   List<User> otherUsers = users.map((user) => User.fromMap(user)).toList();
   return otherUsers;
 }
+
+Future<void> createFriendRequest(FriendRequest fr) async {
+  final database = await openDb();
+  await database.insert('FriendRequests', fr.toMap());
+}
+
+Future<void> deleteFriendRequest(FriendRequest fr) async {
+  final database = await openDb();
+  await database.delete('FriendRequests',
+      where: "fromUserId = ? and toUserId = ?",
+      whereArgs: [fr.fromUserId, fr.toUserId]);
+}
+
+Future<void> acceptFriendRequest(FriendRequest fr) async {
+  final database = await openDb();
+  await database.update('FriendRequests', fr.toMap(),
+      where: "fromUserId = ? and toUserId = ?",
+      whereArgs: [fr.fromUserId, fr.toUserId]);
+}
+
+Future<void> removeFriend(int user1, int user2) async {
+  final database = await openDb();
+  await database.delete('FriendRequests',
+      where: "fromUserId = ? and toUserId = ?", whereArgs: [user1, user2]);
+  await database.delete('FriendRequests',
+      where: "fromUserId = ? and toUserId = ?", whereArgs: [user2, user1]);
+}
+
+Future<List<FriendRequest>> loadFriendRequests() async {
+  final database = await openDb();
+  final friendRequests = await database.query('FriendRequests');
+  return friendRequests
+      .map((friendRequest) => FriendRequest.fromMap(friendRequest))
+      .toList();
+}
+
+  // await database.execute('DROP TABLE IF EXISTS FriendRequest');
+  // await database
+  //     .execute(
+  //         'CREATE TABLE FriendRequests (id INTEGER PRIMARY KEY, fromUserId INTEGER, toUserId INTEGER, isDone INTEGER)')
+  //     .then((value) => print('Hi'));

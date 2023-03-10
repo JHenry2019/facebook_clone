@@ -1,5 +1,6 @@
 import 'package:facebook_clone/pages/base_page.dart';
 import 'package:facebook_clone/pages/log_in_page.dart';
+import 'package:facebook_clone/utils/friend_request_manager.dart';
 import 'package:facebook_clone/utils/posts_manager.dart';
 import 'package:facebook_clone/utils/tabs_manager.dart';
 import 'package:facebook_clone/utils/user_manager.dart';
@@ -25,6 +26,9 @@ void main() async {
                 password: "",
                 createdTime: DateTime.now(),
                 updatedTime: DateTime.now())),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => FriendRequestManager(),
       ),
     ],
     child: const MyApp(),

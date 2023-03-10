@@ -1,16 +1,27 @@
-import 'models.dart';
-
 class FriendRequest {
-  User requestedUser;
-  User acceptedUser;
-  bool isDone = false;
+  int fromUserId;
+  int toUserId;
+  int isDone;
 
-  FriendRequest({
-    required this.requestedUser,
-    required this.acceptedUser,
-  });
+  FriendRequest(
+      {required this.fromUserId, required this.toUserId, required this.isDone});
 
   void accept() {
-    isDone = true;
+    isDone = 1;
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      "fromUserId": fromUserId,
+      "toUserId": toUserId,
+      "isDone": isDone,
+    };
+  }
+
+  static FriendRequest fromMap(Map<String, dynamic> map) {
+    return FriendRequest(
+        fromUserId: map['fromUserId'],
+        toUserId: map['toUserId'],
+        isDone: map['isDone']);
   }
 }
