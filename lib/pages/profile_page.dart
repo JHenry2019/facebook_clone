@@ -1,4 +1,3 @@
-import 'package:facebook_clone/components/circular_profile.dart';
 import 'package:facebook_clone/pages/create_post_page.dart';
 import 'package:facebook_clone/utils/db_methods.dart';
 import 'package:facebook_clone/utils/user_manager.dart';
@@ -147,8 +146,11 @@ class ProfilePage extends StatelessWidget {
                             .toList(),
                       );
                     } else {
-                      return const Center(
-                        child: CircularProgressIndicator(),
+                      return const SizedBox(
+                        height: 200,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
                       );
                     }
                   }),
