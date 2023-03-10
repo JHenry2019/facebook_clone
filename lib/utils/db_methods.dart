@@ -80,3 +80,11 @@ Future<User> loadUser(int userId) async {
       await database.query('Users', where: 'userId = ?', whereArgs: [userId]);
   return User.fromMap(users[0]);
 }
+
+Future<List<User>> loadUsers(int userId) async {
+  final database = await openDb();
+  final users =
+      await database.query('Users', where: 'userId != ?', whereArgs: [userId]);
+  List<User> otherUsers = users.map((user) => User.fromMap(user)).toList();
+  return otherUsers;
+}
