@@ -67,8 +67,11 @@ class _HomePageState extends State<HomePage> {
                           .toList(),
                     );
                   } else {
-                    return const Center(
-                      child: CircularProgressIndicator(),
+                    return const SizedBox(
+                      height: 600,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
                     );
                   }
                 }),

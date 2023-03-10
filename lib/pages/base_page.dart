@@ -1,3 +1,4 @@
+import 'package:facebook_clone/pages/friends_page.dart';
 import 'package:facebook_clone/pages/home_page.dart';
 import 'package:facebook_clone/utils/tabs_manager.dart';
 import 'package:facebook_clone/utils/user_manager.dart';
@@ -15,11 +16,7 @@ class BasePage extends StatefulWidget {
 int pageNum = 0;
 List<Widget> pages = [
   const HomePage(),
-  const Center(
-    child: Placeholder(
-      color: Colors.red,
-    ),
-  ),
+  const FriendsPage(),
   const Center(
     child: Placeholder(
       color: Colors.blue,
