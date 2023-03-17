@@ -4,6 +4,7 @@ import 'package:facebook_clone/utils/posts_manager.dart';
 import 'package:flutter/material.dart';
 import '../models/models.dart';
 import 'package:provider/provider.dart';
+import '../utils/date_calculator.dart';
 
 class PostCard extends StatefulWidget {
   final Post post;
@@ -14,36 +15,6 @@ class PostCard extends StatefulWidget {
 }
 
 class _PostCardState extends State<PostCard> {
-  final monthNames = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-  ];
-
-  String _calculateTime(DateTime dt) {
-    Duration diff = DateTime.now().difference(dt);
-    if (diff.inSeconds < 60) {
-      return "now";
-    } else if (diff.inMinutes < 60) {
-      return "${diff.inMinutes}m";
-    } else if (diff.inHours < 60) {
-      return "${diff.inHours}h";
-    } else if (diff.inDays < 30) {
-      return "${diff.inDays}d";
-    } else {
-      return "${dt.day} ${monthNames[dt.month - 1]} ${dt.year}";
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<User>(
@@ -77,7 +48,7 @@ class _PostCardState extends State<PostCard> {
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Text(_calculateTime(
+                                    Text(DateTimeCalculator.calculateTime(
                                         widget.post.updatedTime)),
                                     const SizedBox(
                                       width: 4,

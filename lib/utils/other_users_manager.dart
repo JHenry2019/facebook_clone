@@ -7,6 +7,7 @@ import 'globals.dart';
 
 class OtherUsersManager extends ChangeNotifier {
   Map<UserStates, List<User>> otherUsers = {};
+  Map<int, DateTime> times = {};
 
   Future<void> acceptRequest(FriendRequest fr) async {
     await acceptFriendRequest(fr);

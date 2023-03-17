@@ -7,12 +7,18 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/models.dart';
+import '../utils/date_calculator.dart';
 
 class UserCard extends StatefulWidget {
-  const UserCard({super.key, required this.user, required this.userState});
+  const UserCard(
+      {super.key,
+      required this.user,
+      required this.userState,
+      required this.time});
 
   final User user;
   final UserStates userState;
+  final DateTime time;
 
   @override
   State<UserCard> createState() => _UserCardState();
@@ -57,6 +63,8 @@ class _UserCardState extends State<UserCard> {
                         .userId!,
                     toUserId: widget.user.userId!,
                     isDone: 0,
+                    requestedTime: DateTime.now(),
+                    acceptedTime: DateTime.now(),
                   ));
                 },
                 child: const Text(
@@ -81,6 +89,8 @@ class _UserCardState extends State<UserCard> {
                         .userId!,
                     toUserId: widget.user.userId!,
                     isDone: 0,
+                    requestedTime: DateTime.now(),
+                    acceptedTime: DateTime.now(),
                   ));
                 },
                 child: const Text('Cancel Request'),
@@ -102,6 +112,8 @@ class _UserCardState extends State<UserCard> {
                         .userId!,
                     fromUserId: widget.user.userId!,
                     isDone: 1,
+                    requestedTime: DateTime.now(),
+                    acceptedTime: DateTime.now(),
                   ));
                 },
                 child: const Text(
@@ -125,6 +137,8 @@ class _UserCardState extends State<UserCard> {
                         .currentUser
                         .userId!,
                     isDone: 0,
+                    requestedTime: DateTime.now(),
+                    acceptedTime: DateTime.now(),
                   ));
                 },
                 child: const Text('Delete'),
@@ -156,7 +170,10 @@ class _UserCardState extends State<UserCard> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const Text('1 min ago'),
+                          widget.userState == UserStates.nonFriend
+                              ? const Text('')
+                              : Text(DateTimeCalculator.calculateTime(
+                                  widget.time)),
                         ],
                       ),
                     ),

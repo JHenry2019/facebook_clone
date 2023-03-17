@@ -15,7 +15,7 @@ Future<Database> openDb() async {
       await db.execute(
           'CREATE TABLE Posts (postId INTEGER PRIMARY KEY, userId INTEGER, createdTime INTEGER, updatedTime INTEGER, text TEXT, photoUrl TEXT)');
       await db.execute(
-          'CREATE TABLE FriendRequests (id INTEGER PRIMARY KEY, fromUserId INTEGER, toUserId INTEGER, isDone INTEGER)');
+          'CREATE TABLE FriendRequests (id INTEGER PRIMARY KEY, fromUserId INTEGER, toUserId INTEGER, isDone INTEGER, requestedTime INTEGER, acceptedTime INTEGER)');
     },
     version: 1,
   );
@@ -87,7 +87,7 @@ Future<User> loadUser(int userId) async {
   return User.fromMap(users[0]);
 }
 
-Future<Map<UserStates, List<User>>> loadOtherUsers(int userId) async {
+Future<Map<String, dynamic>> loadOtherUsers(int userId) async {
   final database = await openDb();
   final users =
       await database.query('Users', where: 'userId != ?', whereArgs: [userId]);
@@ -103,32 +103,56 @@ Future<Map<UserStates, List<User>>> loadOtherUsers(int userId) async {
   List<User> requestedUsers = [];
   List<User> beingRequestedUsers = [];
 
+  Map<int, DateTime> times = {};
+
   for (User user in otherUsers) {
     if (friendRequests.any((fr) =>
         ((user.userId == fr.fromUserId && userId == fr.toUserId) ||
             (userId == fr.fromUserId && user.userId == fr.toUserId)) &&
         fr.isDone == 1)) {
       friends.add(user);
+      times[user.userId!] = friendRequests
+          .firstWhere((fr) =>
+              ((user.userId == fr.fromUserId && userId == fr.toUserId) ||
+                  (userId == fr.fromUserId && user.userId == fr.toUserId)) &&
+              fr.isDone == 1)
+          .acceptedTime;
     } else if (friendRequests.any((fr) =>
         user.userId == fr.toUserId &&
         userId == fr.fromUserId &&
         fr.isDone == 0)) {
       requestedUsers.add(user);
+      times[user.userId!] = friendRequests
+          .firstWhere((fr) =>
+              user.userId == fr.toUserId &&
+              userId == fr.fromUserId &&
+              fr.isDone == 0)
+          .requestedTime;
     } else if (friendRequests.any((fr) =>
         user.userId == fr.fromUserId &&
         userId == fr.toUserId &&
         fr.isDone == 0)) {
       beingRequestedUsers.add(user);
+      times[user.userId!] = friendRequests
+          .firstWhere((fr) =>
+              user.userId == fr.fromUserId &&
+              userId == fr.toUserId &&
+              fr.isDone == 0)
+          .requestedTime;
     } else {
       nonFriends.add(user);
+      times[user.userId!] = DateTime.now();
     }
   }
 
   return {
-    UserStates.friend: friends,
-    UserStates.nonFriend: nonFriends,
-    UserStates.requested: requestedUsers,
-    UserStates.beingRequested: beingRequestedUsers,
+    'users': {
+      UserStates.friend: friends,
+      UserStates.nonFriend: nonFriends,
+      UserStates.requested: requestedUsers,
+      UserStates.beingRequested: beingRequestedUsers,
+    },
+    'times': times,
   };
 }
 
@@ -167,10 +191,3 @@ Future<List<FriendRequest>> loadFriendRequests() async {
       .map((friendRequest) => FriendRequest.fromMap(friendRequest))
       .toList();
 }
-
-// Future<Map<String, List<User>> loadOtherUsers(int currentUserId) async {
-//   final database = await openDb();
-//   final friendsMap = await database.query('FriendRequests', where: '(fromUserId = ? or toUserId = ?) and isDone = 1', whereArgs: [currentUserId, currentUserId]);
-//   List<FriendRequest> friends = friendsMap.map((friend) => FriendRequest.fromMap(friend)).toList();
-
-// }

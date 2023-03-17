@@ -83,8 +83,10 @@ class _FriendsPageState extends State<FriendsPage> {
                   children: [
                     FutureBuilder(
                         future: loadOtherUsers(userManager.currentUser.userId!)
-                            .then((value) =>
-                                otherUsersManager.otherUsers = value),
+                            .then((value) {
+                          otherUsersManager.otherUsers = value['users'];
+                          otherUsersManager.times = value['times'];
+                        }),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.done) {
@@ -94,6 +96,8 @@ class _FriendsPageState extends State<FriendsPage> {
                                       .map((user) => UserCard(
                                             user: user,
                                             userState: currentPage,
+                                            time: otherUsersManager
+                                                .times[user.userId]!,
                                           ))
                                       .toList(),
                             );
