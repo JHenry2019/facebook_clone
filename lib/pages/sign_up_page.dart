@@ -114,6 +114,9 @@ class SignUpPage extends StatelessWidget {
                             );
                             userManager.signUpUser(newUser);
 
+                            confirmPasswordController.clear();
+                            passwordControler.clear();
+
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: const Text('Signed up successfully'),
                               action: SnackBarAction(

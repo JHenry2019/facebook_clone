@@ -1,6 +1,7 @@
 import 'package:facebook_clone/components/circular_profile.dart';
 import 'package:facebook_clone/models/friend_request_model.dart';
-import 'package:facebook_clone/utils/friend_request_manager.dart';
+import 'package:facebook_clone/utils/globals.dart';
+import 'package:facebook_clone/utils/other_users_manager.dart';
 import 'package:facebook_clone/utils/user_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,9 +9,10 @@ import 'package:provider/provider.dart';
 import '../models/models.dart';
 
 class UserCard extends StatefulWidget {
-  const UserCard({super.key, required this.user});
+  const UserCard({super.key, required this.user, required this.userState});
 
   final User user;
+  final UserStates userState;
 
   @override
   State<UserCard> createState() => _UserCardState();
@@ -19,8 +21,119 @@ class UserCard extends StatefulWidget {
 class _UserCardState extends State<UserCard> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<FriendRequestManager>(
-        builder: (context, friendRequestsManager, child) {
+    return Consumer<OtherUsersManager>(
+        builder: (context, otherUsersManager, child) {
+      Map<UserStates, Widget> buttons = {
+        UserStates.friend: Row(
+          children: [
+            Expanded(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey[350],
+                ),
+                onPressed: () {
+                  otherUsersManager.unfriend(
+                      widget.user.userId!,
+                      Provider.of<UserManager>(context, listen: false)
+                          .currentUser
+                          .userId!);
+                },
+                child: const Text('Remove Friend'),
+              ),
+            ),
+          ],
+        ),
+        UserStates.nonFriend: Row(
+          children: [
+            Expanded(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue[600],
+                ),
+                onPressed: () {
+                  otherUsersManager.sendRequest(FriendRequest(
+                    fromUserId: Provider.of<UserManager>(context, listen: false)
+                        .currentUser
+                        .userId!,
+                    toUserId: widget.user.userId!,
+                    isDone: 0,
+                  ));
+                },
+                child: const Text(
+                  'Add friend',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        ),
+        UserStates.requested: Row(
+          children: [
+            Expanded(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey[350],
+                ),
+                onPressed: () {
+                  otherUsersManager.cancelRequet(FriendRequest(
+                    fromUserId: Provider.of<UserManager>(context, listen: false)
+                        .currentUser
+                        .userId!,
+                    toUserId: widget.user.userId!,
+                    isDone: 0,
+                  ));
+                },
+                child: const Text('Cancel Request'),
+              ),
+            ),
+          ],
+        ),
+        UserStates.beingRequested: Row(
+          children: [
+            Expanded(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue[600],
+                ),
+                onPressed: () {
+                  otherUsersManager.acceptRequest(FriendRequest(
+                    toUserId: Provider.of<UserManager>(context, listen: false)
+                        .currentUser
+                        .userId!,
+                    fromUserId: widget.user.userId!,
+                    isDone: 1,
+                  ));
+                },
+                child: const Text(
+                  'Accept',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+            const SizedBox(
+              width: 8,
+            ),
+            Expanded(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey[350],
+                ),
+                onPressed: () {
+                  otherUsersManager.declineRequest(FriendRequest(
+                    fromUserId: widget.user.userId!,
+                    toUserId: Provider.of<UserManager>(context, listen: false)
+                        .currentUser
+                        .userId!,
+                    isDone: 0,
+                  ));
+                },
+                child: const Text('Delete'),
+              ),
+            ),
+          ],
+        ),
+      };
+
       return Card(
         child: Row(
           children: [
@@ -50,148 +163,7 @@ class _UserCardState extends State<UserCard> {
                     const Text('1 mutual friend'),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 5.0),
-                      child: friendRequestsManager.isFriend(
-                              Provider.of<UserManager>(context, listen: false)
-                                  .currentUser
-                                  .userId!,
-                              widget.user.userId!)
-                          ? Row(
-                              children: [
-                                Expanded(
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.grey[350],
-                                    ),
-                                    onPressed: () {
-                                      friendRequestsManager.unfriend(
-                                          widget.user.userId!,
-                                          Provider.of<UserManager>(context,
-                                                  listen: false)
-                                              .currentUser
-                                              .userId!);
-                                    },
-                                    child: const Text('Remove Friend'),
-                                  ),
-                                ),
-                              ],
-                            )
-                          : friendRequestsManager.isRequested(
-                                  widget.user.userId!,
-                                  Provider.of<UserManager>(context,
-                                          listen: false)
-                                      .currentUser
-                                      .userId!)
-                              ? Row(
-                                  children: [
-                                    Expanded(
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.blue[600],
-                                        ),
-                                        onPressed: () {
-                                          friendRequestsManager
-                                              .confirmFriendRequest(
-                                                  widget.user.userId!,
-                                                  Provider.of<UserManager>(
-                                                          context,
-                                                          listen: false)
-                                                      .currentUser
-                                                      .userId!);
-                                        },
-                                        child: const Text(
-                                          'Accept',
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 8,
-                                    ),
-                                    Expanded(
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.grey[350],
-                                        ),
-                                        onPressed: () {},
-                                        child: const Text('Delete'),
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : friendRequestsManager.isRequested(
-                                      Provider.of<UserManager>(context,
-                                              listen: false)
-                                          .currentUser
-                                          .userId!,
-                                      widget.user.userId!)
-                                  ? Row(
-                                      children: [
-                                        Expanded(
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.grey[350],
-                                            ),
-                                            onPressed: () {
-                                              friendRequestsManager
-                                                  .removeFriendRequest(
-                                                      FriendRequest(
-                                                fromUserId:
-                                                    Provider.of<UserManager>(
-                                                            context,
-                                                            listen: false)
-                                                        .currentUser
-                                                        .userId!,
-                                                toUserId: widget.user.userId!,
-                                                isDone: 0,
-                                              ));
-                                            },
-                                            child: const Text('Cancel Request'),
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  : Row(
-                                      children: [
-                                        Expanded(
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.blue[600],
-                                            ),
-                                            onPressed: () {
-                                              friendRequestsManager
-                                                  .addFriendRequest(
-                                                      FriendRequest(
-                                                fromUserId:
-                                                    Provider.of<UserManager>(
-                                                            context,
-                                                            listen: false)
-                                                        .currentUser
-                                                        .userId!,
-                                                toUserId: widget.user.userId!,
-                                                isDone: 0,
-                                              ));
-                                            },
-                                            child: const Text(
-                                              'Add friend',
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 8,
-                                        ),
-                                        Expanded(
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.grey[350],
-                                            ),
-                                            onPressed: () {},
-                                            child: const Text('Remove'),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                      child: buttons[widget.userState],
                     ),
                   ],
                 ),

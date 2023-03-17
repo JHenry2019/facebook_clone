@@ -1,10 +1,11 @@
 import 'package:facebook_clone/components/user_card.dart';
-import 'package:facebook_clone/utils/db_methods.dart';
+import 'package:facebook_clone/utils/other_users_manager.dart';
 import 'package:facebook_clone/utils/user_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/models.dart';
+import '../utils/db_methods.dart';
+import '../utils/globals.dart';
 
 class FriendsPage extends StatefulWidget {
   const FriendsPage({super.key});
@@ -13,13 +14,13 @@ class FriendsPage extends StatefulWidget {
   State<FriendsPage> createState() => _FriendsPageState();
 }
 
-List<User> users = [];
+UserStates currentPage = UserStates.friend;
 
 class _FriendsPageState extends State<FriendsPage> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserManager>(
-      builder: (context, userManager, child) {
+    return Consumer2<UserManager, OtherUsersManager>(
+      builder: (context, userManager, otherUsersManager, child) {
         return SafeArea(
           child: Column(
             children: [
@@ -44,23 +45,61 @@ class _FriendsPageState extends State<FriendsPage> {
                   ),
                 ],
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ChoiceChip(
+                    label: const Text("Friends"),
+                    selected: currentPage == UserStates.friend,
+                    onSelected: (value) => setState(() {
+                      currentPage = UserStates.friend;
+                    }),
+                  ),
+                  ChoiceChip(
+                    label: const Text("Requests"),
+                    selected: currentPage == UserStates.beingRequested,
+                    onSelected: (value) => setState(() {
+                      currentPage = UserStates.beingRequested;
+                    }),
+                  ),
+                  ChoiceChip(
+                    label: const Text("Requested"),
+                    selected: currentPage == UserStates.requested,
+                    onSelected: (value) => setState(() {
+                      currentPage = UserStates.requested;
+                    }),
+                  ),
+                  ChoiceChip(
+                    label: const Text("Others"),
+                    selected: currentPage == UserStates.nonFriend,
+                    onSelected: (value) => setState(() {
+                      currentPage = UserStates.nonFriend;
+                    }),
+                  ),
+                ],
+              ),
               SingleChildScrollView(
                 child: Column(
                   children: [
                     FutureBuilder(
-                        future: loadUsers(userManager.currentUser.userId!)
-                            .then((value) => users = value.toList()),
+                        future: loadOtherUsers(userManager.currentUser.userId!)
+                            .then((value) =>
+                                otherUsersManager.otherUsers = value),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.done) {
                             return Column(
-                              children: users
-                                  .map((user) => UserCard(user: user))
-                                  .toList(),
+                              children:
+                                  otherUsersManager.otherUsers[currentPage]!
+                                      .map((user) => UserCard(
+                                            user: user,
+                                            userState: currentPage,
+                                          ))
+                                      .toList(),
                             );
                           } else {
                             return const SizedBox(
-                              height: 600,
+                              height: 400,
                               child: Center(
                                 child: CircularProgressIndicator(),
                               ),
@@ -69,7 +108,7 @@ class _FriendsPageState extends State<FriendsPage> {
                         }),
                   ],
                 ),
-              ),
+              )
             ],
           ),
         );
