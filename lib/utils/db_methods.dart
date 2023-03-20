@@ -16,6 +16,8 @@ Future<Database> openDb() async {
           'CREATE TABLE Posts (postId INTEGER PRIMARY KEY, userId INTEGER, createdTime INTEGER, updatedTime INTEGER, text TEXT, photoUrl TEXT)');
       await db.execute(
           'CREATE TABLE FriendRequests (id INTEGER PRIMARY KEY, fromUserId INTEGER, toUserId INTEGER, isDone INTEGER, requestedTime INTEGER, acceptedTime INTEGER)');
+      await db.execute(
+          'CREATE TABLE Likes (id INTEGER PRIMARY KEY, userId INTEGER, postId INTEGER, likedTime INTEGER)');
     },
     version: 1,
   );
@@ -190,4 +192,48 @@ Future<List<FriendRequest>> loadFriendRequests() async {
   return friendRequests
       .map((friendRequest) => FriendRequest.fromMap(friendRequest))
       .toList();
+}
+
+Future<void> createLike(Like like) async {
+  final database = await openDb();
+  await database.insert('Likes', like.toMap());
+}
+
+Future<void> deleteLike(int userId, int postId) async {
+  final database = await openDb();
+  await database.delete('Likes',
+      where: 'userId = ? and postId = ?', whereArgs: [userId, postId]);
+}
+
+Future<bool> isLiked(int userId, int postId) async {
+  final database = await openDb();
+  final likes = await database.query('Likes',
+      where: 'userId = ? and postId = ?', whereArgs: [userId, postId]);
+  if (likes.isEmpty) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+Future<int> countLikes(int postId) async {
+  final database = await openDb();
+  final likes =
+      await database.query('Likes', where: 'postId = ?', whereArgs: [postId]);
+  return likes.length;
+}
+
+Future<Map<String, int>> getCountLikes() async {
+  final database = await openDb();
+  final likes = await database.query('Likes');
+  Map<String, int> likesByPost = {};
+  for (var like in likes) {
+    if (likesByPost.containsKey(like['postId'])) {
+      likesByPost[like['postId'].toString()] =
+          likesByPost[like['postId'].toString()]! + 1;
+    } else {
+      likesByPost[like['postId'].toString()] = 1;
+    }
+  }
+  return likesByPost;
 }

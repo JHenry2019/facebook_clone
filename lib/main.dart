@@ -1,5 +1,6 @@
 import 'package:facebook_clone/pages/base_page.dart';
 import 'package:facebook_clone/pages/log_in_page.dart';
+import 'package:facebook_clone/utils/likes_manager.dart';
 import 'package:facebook_clone/utils/other_users_manager.dart';
 import 'package:facebook_clone/utils/posts_manager.dart';
 import 'package:facebook_clone/utils/tabs_manager.dart';
@@ -30,6 +31,7 @@ void main() async {
       ChangeNotifierProvider(
         create: (context) => OtherUsersManager(),
       ),
+      ChangeNotifierProvider(create: (context) => LikesManager()),
     ],
     child: const MyApp(),
   ));

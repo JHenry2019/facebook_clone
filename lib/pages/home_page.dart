@@ -6,14 +6,9 @@ import '../models/models.dart';
 import 'package:provider/provider.dart';
 import '../components/components.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Consumer<PostsManager>(builder: (context, postsManager, child) {
@@ -57,8 +52,9 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
             FutureBuilder(
-                future: loadPosts().then(
-                    (value) => postsManager.posts = value.reversed.toList()),
+                future: loadPosts().then((value) {
+                  postsManager.posts = value.reversed.toList();
+                }),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     return Column(

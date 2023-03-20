@@ -1,10 +1,11 @@
-import 'package:facebook_clone/components/circular_profile.dart';
+import 'package:facebook_clone/components/like_count.dart';
 import 'package:facebook_clone/utils/db_methods.dart';
 import 'package:facebook_clone/utils/posts_manager.dart';
 import 'package:flutter/material.dart';
 import '../models/models.dart';
 import 'package:provider/provider.dart';
 import '../utils/date_calculator.dart';
+import '../components/components.dart';
 
 class PostCard extends StatefulWidget {
   final Post post;
@@ -13,6 +14,8 @@ class PostCard extends StatefulWidget {
   @override
   State<PostCard> createState() => _PostCardState();
 }
+
+int likeCount = 0;
 
 class _PostCardState extends State<PostCard> {
   @override
@@ -79,21 +82,14 @@ class _PostCardState extends State<PostCard> {
                         padding: const EdgeInsets.all(8),
                         child: Text(widget.post.text),
                       ),
+                      LikeCount(
+                        postId: widget.post.postId!,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          TextButton(
-                            onPressed: () {},
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: const [
-                                Icon(Icons.thumb_up_off_alt_outlined),
-                                SizedBox(
-                                  width: 4,
-                                ),
-                                Text('Like'),
-                              ],
-                            ),
+                          LikeButton(
+                            post: widget.post,
                           ),
                           TextButton(
                             onPressed: () {},
