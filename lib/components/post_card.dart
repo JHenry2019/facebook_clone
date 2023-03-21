@@ -82,15 +82,39 @@ class _PostCardState extends State<PostCard> {
                         padding: const EdgeInsets.all(8),
                         child: Text(widget.post.text),
                       ),
-                      LikeCount(
-                        postId: widget.post.postId!,
-                      ),
+                      widget.post.postId == null
+                          ? const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text('👍 0'),
+                            )
+                          : LikeCount(
+                              postId: widget.post.postId!,
+                            ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          LikeButton(
-                            post: widget.post,
-                          ),
+                          widget.post.postId == null
+                              ? Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: const [
+                                    Icon(
+                                      Icons.thumb_up_alt_outlined,
+                                      color: Colors.grey,
+                                    ),
+                                    SizedBox(
+                                      width: 4,
+                                    ),
+                                    Text(
+                                      'Like',
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : LikeButton(
+                                  post: widget.post,
+                                ),
                           TextButton(
                             onPressed: () {},
                             child: Row(

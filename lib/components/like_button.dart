@@ -29,20 +29,18 @@ class _LikeButtonState extends State<LikeButton> {
           return TextButton(
             onPressed: () async {
               if (_isLiked) {
-                await Provider.of<LikesManager>(context, listen: false)
-                    .unlikePost(
-                        Provider.of<UserManager>(context, listen: false)
-                            .currentUser
-                            .userId!,
-                        widget.post.postId!);
+                Provider.of<LikesManager>(context, listen: false).unlikePost(
+                    Provider.of<UserManager>(context, listen: false)
+                        .currentUser
+                        .userId!,
+                    widget.post.postId!);
               } else {
-                await Provider.of<LikesManager>(context, listen: false)
-                    .likePost(Like(
-                        userId: Provider.of<UserManager>(context, listen: false)
-                            .currentUser
-                            .userId!,
-                        postId: widget.post.postId!,
-                        likedTime: DateTime.now()));
+                Provider.of<LikesManager>(context, listen: false).likePost(Like(
+                    userId: Provider.of<UserManager>(context, listen: false)
+                        .currentUser
+                        .userId!,
+                    postId: widget.post.postId!,
+                    likedTime: DateTime.now()));
               }
               setState(() {
                 _isLiked = !_isLiked;

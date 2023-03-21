@@ -15,16 +15,16 @@ class _LikeCountState extends State<LikeCount> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.all(8),
       child: FutureBuilder(
-          future: countLikes(widget.postId).then((value) =>
-              Provider.of<LikesManager>(context)
-                  .likes[widget.postId.toString()] = value),
+          future: countLikes(widget.postId).then((value) {
+            Provider.of<LikesManager>(context, listen: false)
+                .updateLikeCount(widget.postId, value);
+          }),
           builder: ((context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              return Text(Provider.of<LikesManager>(context)
-                  .likes[widget.postId.toString()]
-                  .toString());
+              return Text(
+                  '👍 ${Provider.of<LikesManager>(context).likes[widget.postId.toString()].toString()}');
             } else {
               return const Text('');
             }

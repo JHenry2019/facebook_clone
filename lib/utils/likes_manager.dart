@@ -5,19 +5,18 @@ import '../models/models.dart';
 class LikesManager extends ChangeNotifier {
   Map<String, int> likes = {};
 
-  Future<void> getLikeCount(int postId) async {
-    int count = await countLikes(postId);
+  void updateLikeCount(int postId, int count) {
     likes[postId.toString()] = count;
     notifyListeners();
   }
 
-  Future<void> likePost(Like like) async {
+  void likePost(Like like) async {
     await createLike(like);
     likes[like.postId.toString()] = likes[like.postId.toString()]! + 1;
     notifyListeners();
   }
 
-  Future<void> unlikePost(int userId, int postId) async {
+  void unlikePost(int userId, int postId) async {
     await deleteLike(userId, postId);
     likes[postId.toString()] = likes[postId.toString()]! - 1;
     notifyListeners();
