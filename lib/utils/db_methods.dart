@@ -237,3 +237,19 @@ Future<Map<String, int>> getCountLikes() async {
   }
   return likesByPost;
 }
+
+Future<List<Post>> loadMorePosts(int offset) async {
+  final database = await openDb();
+  final postMaps = await database.query(
+    'Posts',
+    offset: offset,
+    limit: 4,
+  );
+  List<Post> posts = [];
+
+  for (Map<String, dynamic> pm in postMaps) {
+    posts.add(Post.fromMap(pm));
+  }
+
+  return posts;
+}
