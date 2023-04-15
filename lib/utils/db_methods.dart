@@ -24,6 +24,42 @@ Future<Database> openDb() async {
   return database;
 }
 
+Future<void> initMockData() async {
+  final database = await openDb();
+
+  await database.insert('Users', {
+    "realName": 'John',
+    "profileName": 'John',
+    "mail": 'john@gmail.com',
+    "password": '12341234',
+    "createdTime": DateTime.now().millisecondsSinceEpoch,
+    "updatedTime": DateTime.now().millisecondsSinceEpoch,
+  });
+
+  await database.insert('Users', {
+    "realName": 'Henry',
+    "profileName": 'Henry',
+    "mail": 'henry@gmail.com',
+    "password": '12341234',
+    "createdTime": DateTime.now().millisecondsSinceEpoch,
+    "updatedTime": DateTime.now().millisecondsSinceEpoch,
+  });
+
+  await database.insert('Posts', {
+    'userId': 1,
+    'createdTime': DateTime.now().millisecondsSinceEpoch,
+    'updatedTime': DateTime.now().millisecondsSinceEpoch,
+    'text': 'Test post 1 by John',
+  });
+
+  await database.insert('Posts', {
+    'userId': 2,
+    'createdTime': DateTime.now().millisecondsSinceEpoch,
+    'updatedTime': DateTime.now().millisecondsSinceEpoch,
+    'text': 'Test post 2 by Henry',
+  });
+}
+
 Future<List<Post>> loadPosts() async {
   final database = await openDb();
   final postMaps = await database.query('Posts');
@@ -79,6 +115,19 @@ Future<User> logIn(String mail, String password) async {
     } else {
       return Future.error(Exception("Wrong Password"));
     }
+  }
+}
+
+Future<User> logInById(int id) async {
+  final database = await openDb();
+  final users =
+      await database.query('Users', where: 'userId = ?', whereArgs: [id]);
+
+  if (users.isEmpty) {
+    return Future.error(Exception("User does not exits."));
+  } else {
+    final user = User.fromMap(users[0]);
+    return user;
   }
 }
 

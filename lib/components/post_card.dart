@@ -2,6 +2,7 @@ import 'package:facebook_clone/components/like_count.dart';
 import 'package:facebook_clone/utils/db_methods.dart';
 import 'package:facebook_clone/utils/posts_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../models/models.dart';
 import 'package:provider/provider.dart';
 import '../utils/date_calculator.dart';
@@ -9,7 +10,13 @@ import '../components/components.dart';
 
 class PostCard extends StatefulWidget {
   final Post post;
-  const PostCard({super.key, required this.post});
+  final PagingController<int, Post>? pagingController;
+
+  const PostCard({
+    super.key,
+    required this.post,
+    this.pagingController,
+  });
 
   @override
   State<PostCard> createState() => _PostCardState();
@@ -75,6 +82,9 @@ class _PostCardState extends State<PostCard> {
                   onPressed: () {
                     Provider.of<PostsManager>(context, listen: false)
                         .deletePost(widget.post);
+                    if (widget.pagingController != null) {
+                      widget.pagingController!.refresh();
+                    }
                   },
                 ),
               ],

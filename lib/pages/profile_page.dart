@@ -1,5 +1,6 @@
 import 'package:facebook_clone/pages/create_post_page.dart';
 import 'package:facebook_clone/utils/db_methods.dart';
+import 'package:facebook_clone/utils/tabs_manager.dart';
 import 'package:facebook_clone/utils/user_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -44,6 +45,8 @@ class ProfilePage extends StatelessWidget {
                   ),
                   IconButton(
                     onPressed: () {
+                      Provider.of<TabsManager>(context, listen: false)
+                          .changeToTab(0);
                       userManager.logOutUser();
                     },
                     icon: const Icon(Icons.logout),

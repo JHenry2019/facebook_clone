@@ -1,6 +1,7 @@
 import 'package:facebook_clone/models/user_model.dart';
 import 'package:flutter/material.dart';
 import '../utils/db_methods.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserManager extends ChangeNotifier {
   User currentUser;
@@ -19,11 +20,19 @@ class UserManager extends ChangeNotifier {
           .showSnackBar(SnackBar(content: Text(error.toString())));
       throw Exception("Something went wrong");
     });
+
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
+    await sharedPreferences.setInt('currentUserId', currentUser.userId!);
+
     isLoggedIn = true;
+
     notifyListeners();
   }
 
-  void logOutUser() {
+  void logOutUser() async {
+    isLoggedIn = false;
+
     currentUser = User(
         userId: 0,
         realName: "Default account",
@@ -32,7 +41,23 @@ class UserManager extends ChangeNotifier {
         password: "",
         createdTime: DateTime.now(),
         updatedTime: DateTime.now());
-    isLoggedIn = false;
+
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
+    await sharedPreferences.remove('currentUserId');
+
+    notifyListeners();
+  }
+
+  void logInUserById(int id, BuildContext context) async {
+    currentUser = await logInById(id).onError((error, stackTrace) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(error.toString())));
+      throw Exception("Something went wrong");
+    });
+
+    isLoggedIn = true;
+
     notifyListeners();
   }
 }

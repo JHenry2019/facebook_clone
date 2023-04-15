@@ -30,6 +30,7 @@ class _HomePageState extends State<HomePage> {
         if (!mounted) return;
 
         final newPosts = await loadMorePosts(pageKey);
+
         if (newPosts.length < 4) {
           pagingController.appendLastPage(newPosts);
         } else {
@@ -68,7 +69,11 @@ class _HomePageState extends State<HomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const CreatePostPage(),
+                        builder: (context) {
+                          return CreatePostPage(
+                            pagingController: pagingController,
+                          );
+                        },
                       ),
                     );
                   },
@@ -89,7 +94,10 @@ class _HomePageState extends State<HomePage> {
                   physics: const BouncingScrollPhysics(),
                   pagingController: pagingController,
                   builderDelegate: PagedChildBuilderDelegate<Post>(
-                    itemBuilder: (context, post, index) => PostCard(post: post),
+                    itemBuilder: (context, post, index) => PostCard(
+                      post: post,
+                      pagingController: pagingController,
+                    ),
                     newPageProgressIndicatorBuilder: (context) => const Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Center(child: CircularProgressIndicator()),

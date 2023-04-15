@@ -1,5 +1,6 @@
 import 'package:facebook_clone/components/components.dart';
 import 'package:facebook_clone/utils/user_manager.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../models/models.dart';
 import 'package:facebook_clone/utils/posts_manager.dart';
@@ -7,7 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CreatePostPage extends StatefulWidget {
-  const CreatePostPage({Key? key}) : super(key: key);
+  const CreatePostPage({
+    Key? key,
+    this.pagingController,
+  }) : super(key: key);
+
+  final PagingController<int, Post>? pagingController;
 
   @override
   State<CreatePostPage> createState() => _CreatePostPageState();
@@ -56,6 +62,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
                         if (_formKey.currentState!.validate()) {
                           Provider.of<PostsManager>(context, listen: false)
                               .addPost(post);
+                          if (widget.pagingController != null) {
+                            widget.pagingController!.refresh();
+                          }
                           if (mounted) {
                             Navigator.pop(context);
                           }
