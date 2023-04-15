@@ -7,6 +7,14 @@ Self-practicing project.
 
 This project is a starting point for a Flutter application.
 
+You can create your own account or you can use these default accounts:
+
+mail - john@gmail.com
+password - 12341234
+
+mail - henry@gmail.com
+password - 12341234
+
 A few resources to get you started if this is your first Flutter project:
 
 - [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
